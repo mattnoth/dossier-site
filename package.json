@@ -1,0 +1,29 @@
+{
+  "name": "dossier-site",
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "prepare": "git config core.hooksPath hooks",
+    "dev": "tsx build/build.ts --dev",
+    "build": "tsc --noEmit && tsc -p tsconfig.build.json --noEmit && tsx build/build.ts",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.build.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/sharp": "^0.31.1",
+    "esbuild": "^0.25.0",
+    "gray-matter": "^4.0.3",
+    "marked": "^15.0.0",
+    "sharp": "^0.34.5",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0"
+  },
+  "dependencies": {
+    "@types/d3": "^7.4.3",
+    "d3": "^7.9.0"
+  }
+}
