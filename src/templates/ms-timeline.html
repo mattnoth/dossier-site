@@ -1,0 +1,35 @@
+<div class="container ms-section">
+  {{ms_nav}}
+  <article class="ms-article">
+    <header class="ms-header">
+      <h1>{{page_title}}</h1>
+      <p class="ms-subtitle">Chronological timeline of all documented events. Scroll to navigate, click events for case details.</p>
+    </header>
+    <div class="ms-interactive" data-module="ms-timeline" data-src="/data/timeline-data.json">
+      <div class="ms-key" id="timeline-key">
+        <h3>Key</h3>
+        <ul class="ms-key__list">
+          <li><span class="ms-key__dot ms-key__dot--disappearance"></span> Disappearance</li>
+          <li><span class="ms-key__dot ms-key__dot--death"></span> Death</li>
+          <li><span class="ms-key__dot ms-key__dot--body_found"></span> Body found</li>
+          <li><span class="ms-key__dot ms-key__dot--suspect_arrested"></span> Suspect arrested</li>
+          <li><span class="ms-key__dot ms-key__dot--investigation"></span> Investigation</li>
+          <li><span class="ms-key__dot ms-key__dot--institutional"></span> Institutional</li>
+          <li><span class="ms-key__dot ms-key__dot--political"></span> Political</li>
+          <li><span class="ms-key__dot ms-key__dot--media"></span> Media</li>
+          <li><span class="ms-key__dot ms-key__dot--other"></span> Other</li>
+        </ul>
+      </div>
+      <div class="ms-interactive__canvas" id="timeline-canvas" role="img" aria-label="Event timeline" tabindex="0"></div>
+      <div class="ms-tooltip" id="timeline-tooltip" role="tooltip" hidden></div>
+    </div>
+    <noscript>
+      <div class="ms-noscript">
+        <p>This interactive timeline requires JavaScript. Case details are in the <a href="/">case index</a>.</p>
+      </div>
+    </noscript>
+    <footer class="ms-page-footer">
+      <a href="/" class="back-link">&larr; Back to overview</a>
+    </footer>
+  </article>
+</div>

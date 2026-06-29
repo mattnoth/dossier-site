@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{title}}</title>
+    <meta name="description" content="{{description}}">
+    <meta name="robots" content="{{robots}}">
+    <link rel="canonical" href="{{page_url}}">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{title}}">
+    <meta property="og:description" content="{{description}}">
+    <meta property="og:type" content="{{og_type}}">
+    <meta property="og:url" content="{{page_url}}">
+    <meta property="og:image" content="{{og_image}}">
+    <meta property="og:site_name" content="{{site_name}}">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{title}}">
+    <meta name="twitter:description" content="{{description}}">
+    <meta name="twitter:image" content="{{og_image}}">
+
+    <!-- Structured data -->
+    {{json_ld}}
+
+    <link rel="stylesheet" href="/main.css">
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <script type="module" src="/main.js"></script>
+  </head>
+  <body>
+    <a href="#content" id="skip-link">Skip to content</a>
+
+    <div class="site-banner" role="note">
+      <div class="container">
+        <span class="site-banner__tag">DOSSIER</span>
+        <span class="site-banner__text">All prose on this site is <strong>AI-generated</strong> under human direction from public sources. Investigation does not imply endorsement of any hypothesis.</span>
+      </div>
+    </div>
+
+    <header class="site-header nav" data-module="nav">
+      <div class="container">
+        <a href="/" class="nav__logo">Missing<span> Scientists</span></a>
+
+        <!-- Hidden checkbox — CSS-only mobile menu toggle -->
+        <input type="checkbox" id="nav-toggle" aria-hidden="true">
+
+        <nav aria-label="Site navigation">
+          <ul class="nav__links">
+            <li><a href="/">Cases</a></li>
+            <li><a href="/analysis/connections/">Analysis</a></li>
+            <li><a href="/diagram/">Diagram</a></li>
+            <li><a href="/timeline/">Timeline</a></li>
+            <li><a href="/sources/">Sources</a></li>
+            <li><a href="/methodology/">Methodology</a></li>
+            <li><a href="/transparency/">About</a></li>
+          </ul>
+        </nav>
+
+        <div class="nav__controls">
+          <button
+            type="button"
+            data-module="theme-toggle"
+            aria-label="Switch to dark mode"
+          >
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          </button>
+
+          <label class="nav__toggle-label" for="nav-toggle" aria-label="Toggle navigation menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </label>
+        </div>
+      </div>
+    </header>
+
+    <main id="content" data-module="scroll-reveal">
+      {{content}}
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <nav aria-label="Source links">
+          <ul class="nav__links">
+            {{social_links}}
+          </ul>
+        </nav>
+        <p>{{footer_note}}</p>
+        <p>&copy; 2026 {{site_name}} &middot; AI-assisted research &middot; Built with vanilla TS + CSS</p>
+      </div>
+    </footer>
+  </body>
+</html>

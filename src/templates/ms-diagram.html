@@ -1,0 +1,56 @@
+<div class="container ms-section">
+  {{ms_nav}}
+  <article class="ms-article">
+    <header class="ms-header">
+      <h1>{{page_title}}</h1>
+      <p class="ms-subtitle">Interactive network showing connections between cases, institutions, locations, and programs. Toggle layers to explore different levels of evidence.</p>
+    </header>
+    <div class="ms-interactive" data-module="ms-diagram" data-src="/data/diagram-data.json">
+      <div class="ms-controls" id="diagram-controls">
+        <fieldset class="ms-layer-toggles">
+          <legend>Layers</legend>
+          <label><input type="checkbox" value="tight" checked> Tight (documented)</label>
+          <label><input type="checkbox" value="medium"> Medium (inferred)</label>
+          <label><input type="checkbox" value="corkboard"> Corkboard (speculative)</label>
+        </fieldset>
+      </div>
+      <div class="ms-key" id="diagram-key">
+        <h3>Key</h3>
+        <div class="ms-key__section">
+          <h4>Nodes</h4>
+          <ul class="ms-key__list">
+            <li><span class="ms-key__swatch ms-key__swatch--person"></span> Person (case subject)</li>
+            <li><span class="ms-key__swatch ms-key__swatch--institution"></span> Institution</li>
+            <li><span class="ms-key__swatch ms-key__swatch--location"></span> Location</li>
+            <li><span class="ms-key__swatch ms-key__swatch--program"></span> Program</li>
+          </ul>
+        </div>
+        <div class="ms-key__section">
+          <h4>Edges</h4>
+          <ul class="ms-key__list">
+            <li><span class="ms-key__line ms-key__line--tight"></span> Tight (solid)</li>
+            <li><span class="ms-key__line ms-key__line--medium"></span> Medium (dashed)</li>
+            <li><span class="ms-key__line ms-key__line--corkboard"></span> Corkboard (dotted)</li>
+          </ul>
+        </div>
+        <div class="ms-key__section">
+          <h4>Confidence</h4>
+          <ul class="ms-key__list">
+            <li>Thicker lines = higher confidence</li>
+            <li>Hover any edge for details</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ms-interactive__canvas" id="diagram-canvas" role="img" aria-label="Network connection diagram" tabindex="0"></div>
+      <div class="ms-tooltip" id="diagram-tooltip" role="tooltip" hidden></div>
+    </div>
+    <noscript>
+      <div class="ms-noscript">
+        <p>This interactive diagram requires JavaScript. The underlying data is in the <a href="/analysis/connections/">connection analysis</a>.</p>
+      </div>
+    </noscript>
+    <footer class="ms-page-footer">
+      <a href="/" class="back-link">&larr; Back to overview</a>
+    </footer>
+  </article>
+</div>
