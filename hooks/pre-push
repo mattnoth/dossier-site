@@ -1,0 +1,78 @@
+#!/bin/sh
+#
+# pre-push hook — blocks pushes to main when:
+#   1. Any submodule pointer references a commit not on its remote
+#   2. `npm run build` fails
+#
+# Generic: reads .gitmodules dynamically, no repo names hardcoded.
+#
+# Install: git config core.hooksPath hooks
+#   (or the "prepare" script in package.json does this automatically on npm install)
+
+remote="$1"
+url="$2"
+
+# Only gate pushes to main
+pushing_to_main=false
+while read local_ref local_oid remote_ref remote_oid; do
+  case "$remote_ref" in
+    refs/heads/main) pushing_to_main=true ;;
+  esac
+done
+
+if [ "$pushing_to_main" = false ]; then
+  exit 0
+fi
+
+echo "pre-push: pushing to main — running safeguards..."
+
+# ── 1. Submodule pointer check ──────────────────────────────────────────────
+# Write submodule paths to a temp file to avoid pipe-subshell exit trap.
+
+tmpfile=$(mktemp)
+trap 'rm -f "$tmpfile"' EXIT
+
+git submodule status --recursive > "$tmpfile"
+
+while read oid path rest; do
+  # strip leading +/- status prefix from oid
+  oid="${oid#[+-]}"
+
+  # resolve remote URL — try .gitmodules key first, fall back to origin
+  remote_url=$(git config --file .gitmodules "submodule.${path}.url" 2>/dev/null)
+  if [ -z "$remote_url" ]; then
+    remote_url=$(git -C "$path" remote get-url origin 2>/dev/null)
+  fi
+
+  if [ -z "$remote_url" ]; then
+    echo >&2 "pre-push: FAIL — cannot determine remote for submodule '$path'"
+    exit 1
+  fi
+
+  # Fetch latest from the submodule's remote
+  if ! git -C "$path" fetch --quiet origin 2>/dev/null; then
+    echo >&2 "pre-push: FAIL — cannot fetch remote for submodule '$path'"
+    exit 1
+  fi
+
+  # Verify the pointer commit exists on a remote branch
+  if ! git -C "$path" branch -r --contains "$oid" 2>/dev/null | grep -q 'origin/'; then
+    echo >&2 "pre-push: FAIL — submodule '$path' points to $oid which is not on its remote"
+    echo >&2 "  Push the submodule first, then retry."
+    exit 1
+  fi
+done < "$tmpfile"
+
+echo "pre-push: ✓ all submodule pointers exist on their remotes"
+
+# ── 2. Build check ──────────────────────────────────────────────────────────
+
+echo "pre-push: running build..."
+if ! npm run build --silent 2>&1; then
+  echo >&2 "pre-push: FAIL — 'npm run build' failed. Fix the build before pushing to main."
+  exit 1
+fi
+
+echo "pre-push: ✓ build succeeded"
+echo "pre-push: all checks passed"
+exit 0
