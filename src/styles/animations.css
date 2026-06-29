@@ -1,0 +1,125 @@
+@layer animations {
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.94);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Page-load entrance animations */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-animate] {
+      animation: slide-up var(--duration-slow) ease both;
+    }
+
+    .stagger-1 { animation-delay: 0ms; }
+    .stagger-2 { animation-delay: 80ms; }
+    .stagger-3 { animation-delay: 160ms; }
+    .stagger-4 { animation-delay: 240ms; }
+  }
+
+  /* Scroll-driven reveal — progressive enhancement */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      [data-reveal] {
+        animation: fade-in linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 40%;
+      }
+
+      /* Explicit declaration — default [data-reveal] already uses fade-in, but
+         this selector survives if the default rule's animation-name ever changes. */
+      [data-reveal="fade-in"] {
+        animation-name: fade-in;
+      }
+
+      [data-reveal="fade-up"] {
+        animation-name: slide-up;
+      }
+
+      [data-reveal="scale-in"] {
+        animation-name: scale-in;
+      }
+    }
+  }
+
+  /* JS-driven reveal fallback — only active when scroll-driven animations are unsupported.
+     Gated so these rules never compete with the [data-reveal] native path above. */
+  @supports not (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      [data-reveal].reveal-pending {
+        opacity: 0;
+      }
+
+      [data-reveal="fade-up"].reveal-pending {
+        transform: translateY(1.5rem);
+      }
+
+      [data-reveal="scale-in"].reveal-pending {
+        transform: scale(0.94);
+      }
+
+      [data-reveal].revealed {
+        opacity: 1;
+        transform: none;
+        transition:
+          opacity var(--duration-slow) ease,
+          transform var(--duration-slow) ease;
+      }
+
+      [data-reveal].no-transition {
+        transition: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [data-reveal].reveal-pending {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  }
+
+  /* Reduced motion: kill everything */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    [data-reveal],
+    [data-animate] {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

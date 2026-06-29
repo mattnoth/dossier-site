@@ -1,0 +1,953 @@
+@layer components {
+  /* ═══════════════════════════════════════════════════════════════════
+     Missing Scientists — the standalone dossier site
+     Academic-register styles for the research dossier.
+     All classes prefixed ms- to avoid collisions.
+     ═══════════════════════════════════════════════════════════════════ */
+
+  /* ── Section wrapper ─────────────────────────────────────────────── */
+  .ms-section {
+    padding-block: var(--space-md);
+  }
+
+  .ms-article {
+    max-inline-size: 100%;
+    overflow-x: hidden;
+  }
+
+  /* ── Section navigation ──────────────────────────────────────────── */
+  .ms-nav {
+    border-block-end: 0.0625rem solid var(--color-border);
+    padding-block-end: var(--space-xs);
+    margin-block-end: var(--space-md);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .ms-nav__links {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--space-xs) var(--space-sm);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: var(--text-sm);
+    white-space: nowrap;
+    inline-size: max-content;
+
+    & li {
+      flex-shrink: 0;
+    }
+
+    & a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      padding-block: var(--space-2xs);
+      border-block-end: 0.125rem solid transparent;
+      transition:
+        color var(--duration-fast) ease,
+        border-color var(--duration-fast) ease;
+
+      &:hover {
+        color: var(--color-accent);
+      }
+
+      &[aria-current="page"] {
+        color: var(--color-accent);
+        border-block-end-color: var(--color-accent);
+        font-weight: 600;
+      }
+    }
+  }
+
+  /* ── Page header ─────────────────────────────────────────────────── */
+  .ms-header {
+    margin-block-end: var(--space-sm);
+
+    @media (min-width: 64rem) {
+      margin-block-end: var(--space-xl);
+    }
+
+    & h1 {
+      margin-block-end: var(--space-sm);
+    }
+  }
+
+  .ms-subtitle {
+    color: var(--color-text-muted);
+    font-size: var(--text-base);
+    max-inline-size: 65ch;
+    margin: 0;
+  }
+
+  .ms-breadcrumb {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-block-end: var(--space-sm);
+
+    & a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+
+      &:hover {
+        color: var(--color-accent);
+      }
+    }
+  }
+
+  .ms-version {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin: 0;
+    margin-block-start: var(--space-md);
+  }
+
+  /* ── Content layout (TOC sidebar + prose) ────────────────────────── */
+  .ms-layout {
+    display: grid;
+    gap: var(--space-sm);
+    grid-template-columns: minmax(0, 1fr);
+
+    @media (min-width: 64rem) {
+      gap: var(--space-xl);
+      grid-template-columns: minmax(0, 1fr);
+
+      &:has(.ms-toc) {
+        grid-template-columns: 15rem minmax(0, 1fr);
+      }
+    }
+  }
+
+  .ms-prose {
+    max-inline-size: 75ch;
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+
+    /* Make links clearly visible in research prose */
+    & a[href] {
+      color: oklch(42% 0.12 248);
+      text-decoration: underline;
+      text-decoration-thickness: 0.1em;
+      text-underline-offset: 0.2em;
+      text-decoration-color: color-mix(in oklch, oklch(42% 0.12 248) 40%, transparent);
+      transition:
+        color var(--duration-fast) ease,
+        text-decoration-color var(--duration-fast) ease;
+
+      &:hover {
+        color: oklch(35% 0.14 248);
+        text-decoration-color: oklch(35% 0.14 248);
+      }
+
+      &:visited {
+        color: oklch(42% 0.1 300);
+        text-decoration-color: color-mix(in oklch, oklch(42% 0.1 300) 40%, transparent);
+      }
+    }
+  }
+
+  [data-theme="dark"] .ms-prose a[href] {
+    color: oklch(72% 0.1 248);
+    text-decoration-color: color-mix(in oklch, oklch(72% 0.1 248) 40%, transparent);
+
+    &:hover {
+      color: oklch(78% 0.12 248);
+      text-decoration-color: oklch(78% 0.12 248);
+    }
+
+    &:visited {
+      color: oklch(72% 0.08 300);
+      text-decoration-color: color-mix(in oklch, oklch(72% 0.08 300) 40%, transparent);
+    }
+  }
+
+  /* ── Table of contents ───────────────────────────────────────────── */
+  .ms-toc {
+    font-size: var(--text-sm);
+    position: relative;
+
+    @media (min-width: 64rem) {
+      position: sticky;
+      inset-block-start: 5rem;
+      max-block-size: calc(100dvh - 6rem);
+      overflow-y: auto;
+    }
+
+    & summary {
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--color-text-muted);
+      margin-block-end: 0;
+      display: list-item;
+      list-style: disclosure-closed inside;
+
+      /* Desktop: TOC always visible, no toggle needed */
+      @media (min-width: 64rem) {
+        display: none;
+      }
+    }
+
+    & details[open] > summary {
+      list-style-type: disclosure-open;
+    }
+
+    & ol {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Desktop: always show TOC list regardless of details state */
+    @media (min-width: 64rem) {
+      & details > ol {
+        display: block;
+      }
+    }
+
+    /* Mobile overlay for the TOC list */
+    @media (max-width: 63.999rem) {
+      & details[open] > ol {
+        position: absolute;
+        z-index: 100;
+        inset-block-start: 100%;
+        inset-inline-start: 0;
+        inline-size: max(16rem, 80vw);
+        max-inline-size: calc(100vw - 2 * var(--space-md));
+        max-block-size: 60vh;
+        overflow-y: auto;
+        background: var(--color-surface);
+        border: 0.0625rem solid var(--color-border);
+        border-radius: var(--radius-md);
+        padding: var(--space-sm) var(--space-md);
+        box-shadow: 0 0.25rem 1rem oklch(0% 0 0 / 20%);
+      }
+    }
+  }
+
+  .ms-toc__item {
+    margin-block: var(--space-2xs);
+
+    &[data-level="3"] {
+      padding-inline-start: var(--space-md);
+    }
+
+    & a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      line-height: 1.4;
+      display: block;
+      padding-block: var(--space-2xs);
+      border-inline-start: 0.125rem solid transparent;
+      padding-inline-start: var(--space-xs);
+      transition:
+        color var(--duration-fast) ease,
+        border-color var(--duration-fast) ease;
+
+      &:hover {
+        color: var(--color-accent);
+        border-inline-start-color: var(--color-accent);
+      }
+    }
+  }
+
+  /* ── Case index sidebar ──────────────────────────────────────────── */
+  .ms-case-nav {
+    margin-block-start: var(--space-xl);
+    padding-block-start: var(--space-lg);
+    border-block-start: 0.0625rem solid var(--color-border);
+
+    & h3 {
+      font-size: var(--text-base);
+      font-weight: 600;
+      margin-block-end: var(--space-sm);
+    }
+
+    & ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+      gap: var(--space-2xs) var(--space-lg);
+    }
+
+    & a {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      text-decoration: none;
+      padding-block: var(--space-2xs);
+      display: block;
+      transition: color var(--duration-fast) ease;
+
+      &:hover {
+        color: var(--color-accent);
+      }
+
+      &[aria-current="page"] {
+        color: var(--color-accent);
+        font-weight: 600;
+      }
+    }
+  }
+
+  /* ── Analysis sub-navigation ─────────────────────────────────────── */
+  .ms-analysis-nav {
+    margin-block-end: var(--space-lg);
+
+    & ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs) var(--space-md);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    & a {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      text-decoration: none;
+      padding: var(--space-2xs) var(--space-sm);
+      border: 0.0625rem solid var(--color-border);
+      border-radius: var(--radius-md);
+      transition:
+        color var(--duration-fast) ease,
+        border-color var(--duration-fast) ease,
+        background-color var(--duration-fast) ease;
+
+      &:hover {
+        color: var(--color-accent);
+        border-color: var(--color-accent);
+      }
+
+      &[aria-current="page"] {
+        color: var(--color-on-accent);
+        background-color: var(--color-accent);
+        border-color: var(--color-accent);
+      }
+    }
+  }
+
+  /* ── Prev/next navigation ────────────────────────────────────────── */
+  .ms-prev-next {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin-block-end: var(--space-lg);
+  }
+
+  .ms-prev-next__link {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color var(--duration-fast) ease;
+
+    &:hover {
+      color: var(--color-accent);
+    }
+  }
+
+  .ms-prev-next__link--prev {
+    text-align: start;
+  }
+
+  .ms-prev-next__link--next {
+    text-align: end;
+    margin-inline-start: auto;
+  }
+
+  /* ── Page footer ───────────────────────���─────────────────────────── */
+  .ms-page-footer {
+    margin-block-start: var(--space-2xl);
+    padding-block-start: var(--space-lg);
+    border-block-start: 0.0625rem solid var(--color-border);
+  }
+
+  /* ── Abbreviation tooltips ────────────────────────────────────────── */
+  .ms-prose abbr[data-tooltip] {
+    position: relative;
+    text-decoration: underline dotted 1.5px;
+    text-decoration-color: color-mix(in oklch, var(--color-accent, #6a9fdb) 60%, transparent);
+    text-underline-offset: 0.18em;
+    cursor: default;
+    font-variant: none;
+  }
+
+  .ms-prose abbr[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 0.4rem);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.35rem 0.6rem;
+    background-color: var(--color-surface, #1a1a2e);
+    color: var(--color-text, #e0e0e0);
+    border: 0.0625rem solid var(--color-border, #333);
+    border-radius: var(--radius-md, 0.375rem);
+    box-shadow: 0 0.25rem 0.75rem color-mix(in oklch, var(--color-text, #000) 15%, transparent);
+    font-size: var(--text-sm, 0.8125rem);
+    line-height: 1.4;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: 40;
+  }
+
+  .ms-prose abbr[data-tooltip]:hover::after,
+  .ms-prose abbr[data-tooltip]:focus::after {
+    opacity: 1;
+  }
+
+  /* ── Glossary outbound links ────────────────────────────────────── */
+  .ms-prose a.glossary-link {
+    text-decoration: none;
+    border-bottom: none;
+    color: inherit;
+  }
+  .ms-prose a.glossary-link abbr[data-tooltip] {
+    text-decoration: underline dotted 1.5px;
+    text-decoration-color: color-mix(in oklch, var(--color-accent, #6a9fdb) 60%, transparent);
+  }
+  .ms-prose a.glossary-link:hover abbr[data-tooltip] {
+    text-decoration-style: solid;
+    text-decoration-color: var(--color-accent, #6a9fdb);
+  }
+
+  /* ── Tier badge links ───────────────────────────────────────────── */
+  .ms-tier-link {
+    text-decoration: none !important;
+    border: none !important;
+  }
+
+  /* ── Source tier badges ──────────────────────────────────────────── */
+  .ms-tier {
+    display: inline-flex;
+    align-items: center;
+    padding-inline: 0.3em;
+    padding-block: 0.05em;
+    font-size: 0.8em;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    line-height: 1;
+    border-radius: var(--radius-sm);
+    vertical-align: baseline;
+    cursor: help;
+
+    &[data-tier="1"] {
+      background-color: color-mix(in oklch, oklch(55% 0.15 145) 20%, transparent);
+      color: oklch(40% 0.12 145);
+    }
+
+    &[data-tier="2"] {
+      background-color: color-mix(in oklch, oklch(55% 0.1 248) 20%, transparent);
+      color: oklch(40% 0.1 248);
+    }
+
+    &[data-tier="3"] {
+      background-color: color-mix(in oklch, var(--color-text-muted) 15%, transparent);
+      color: var(--color-text-muted);
+    }
+
+    &[data-tier="4"] {
+      background-color: color-mix(in oklch, oklch(60% 0.12 60) 20%, transparent);
+      color: oklch(45% 0.1 60);
+    }
+
+    &[data-tier="5"] {
+      background-color: color-mix(in oklch, oklch(60% 0.15 30) 20%, transparent);
+      color: oklch(45% 0.15 30);
+    }
+
+    &[data-tier="6"] {
+      background-color: color-mix(in oklch, oklch(55% 0.08 300) 15%, transparent);
+      color: oklch(45% 0.08 300);
+    }
+
+    &[data-tier="7"] {
+      background-color: color-mix(in oklch, oklch(50% 0.1 0) 15%, transparent);
+      color: oklch(40% 0.1 0);
+    }
+  }
+
+  [data-theme="dark"] .ms-tier {
+    &[data-tier="1"] {
+      background-color: color-mix(in oklch, oklch(55% 0.15 145) 25%, transparent);
+      color: oklch(70% 0.12 145);
+    }
+
+    &[data-tier="2"] {
+      background-color: color-mix(in oklch, oklch(55% 0.1 248) 25%, transparent);
+      color: oklch(70% 0.1 248);
+    }
+
+    &[data-tier="3"] {
+      background-color: color-mix(in oklch, var(--color-text-muted) 20%, transparent);
+      color: var(--color-text-muted);
+    }
+
+    &[data-tier="4"] {
+      background-color: color-mix(in oklch, oklch(60% 0.12 60) 25%, transparent);
+      color: oklch(70% 0.1 60);
+    }
+
+    &[data-tier="5"] {
+      background-color: color-mix(in oklch, oklch(60% 0.15 30) 25%, transparent);
+      color: oklch(70% 0.15 30);
+    }
+
+    &[data-tier="6"] {
+      background-color: color-mix(in oklch, oklch(55% 0.08 300) 20%, transparent);
+      color: oklch(70% 0.08 300);
+    }
+
+    &[data-tier="7"] {
+      background-color: color-mix(in oklch, oklch(50% 0.1 0) 20%, transparent);
+      color: oklch(70% 0.1 0);
+    }
+  }
+
+  /* ── Source attribution (visible when source contains links) ─────── */
+  .ms-source-attr {
+    font-size: 0.8em;
+    color: var(--color-text-muted);
+
+    & a[href] {
+      color: oklch(42% 0.12 248);
+      text-decoration: underline;
+      text-decoration-thickness: 0.1em;
+      text-underline-offset: 0.15em;
+      text-decoration-color: color-mix(in oklch, oklch(42% 0.12 248) 40%, transparent);
+
+      &:hover {
+        color: oklch(35% 0.14 248);
+        text-decoration-color: oklch(35% 0.14 248);
+      }
+    }
+  }
+
+  [data-theme="dark"] .ms-source-attr {
+    & a[href] {
+      color: oklch(72% 0.1 248);
+      text-decoration-color: color-mix(in oklch, oklch(72% 0.1 248) 40%, transparent);
+
+      &:hover {
+        color: oklch(78% 0.12 248);
+        text-decoration-color: oklch(78% 0.12 248);
+      }
+    }
+  }
+
+  /* ── Confidence labels ───────────────────────────────────────────── */
+  .ms-confidence {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.8em;
+    font-weight: 500;
+    line-height: 1;
+    vertical-align: baseline;
+
+    &[data-level="confirmed"] {
+      color: oklch(45% 0.12 145);
+    }
+
+    &[data-level="reported"] {
+      color: oklch(45% 0.08 248);
+    }
+
+    &[data-level="alleged"] {
+      color: oklch(50% 0.12 60);
+    }
+
+    &[data-level="speculated"] {
+      color: oklch(50% 0.1 0);
+    }
+  }
+
+  [data-theme="dark"] .ms-confidence {
+    &[data-level="confirmed"] {
+      color: oklch(70% 0.12 145);
+    }
+
+    &[data-level="reported"] {
+      color: oklch(70% 0.08 248);
+    }
+
+    &[data-level="alleged"] {
+      color: oklch(70% 0.12 60);
+    }
+
+    &[data-level="speculated"] {
+      color: oklch(70% 0.1 0);
+    }
+  }
+
+  /* ── Source / transparency sections ──────────────────────────────── */
+  .ms-source-section {
+    padding-block-end: var(--space-lg);
+    border-block-end: 0.0625rem solid var(--color-border);
+    margin-block-end: var(--space-lg);
+
+    &:last-child {
+      border-block-end: none;
+    }
+  }
+
+  .ms-transparency-section {
+    margin-block-end: var(--space-xl);
+
+    & details {
+      & summary {
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--color-text-muted);
+
+        &:hover {
+          color: var(--color-accent);
+        }
+      }
+    }
+  }
+
+  /* ── Interactive pages ───────────────────────────────────────────── */
+  .ms-interactive {
+    position: relative;
+    margin-block: var(--space-lg);
+  }
+
+  .ms-interactive__canvas {
+    inline-size: 100%;
+    min-block-size: 28rem;
+    border: 0.0625rem solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+    overflow: hidden;
+
+    &:focus-visible {
+      outline: 0.125rem solid var(--color-accent);
+      outline-offset: 0.125rem;
+    }
+
+    & svg {
+      display: block;
+      inline-size: 100%;
+      block-size: 100%;
+    }
+  }
+
+  .ms-controls {
+    margin-block-end: var(--space-md);
+  }
+
+  .ms-layer-toggles {
+    border: 0.0625rem solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-md);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-lg);
+    align-items: center;
+
+    & legend {
+      font-weight: 600;
+      font-size: var(--text-sm);
+      padding-inline: var(--space-xs);
+    }
+
+    & label {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: var(--text-sm);
+      cursor: pointer;
+      color: var(--color-text-muted);
+    }
+
+    & input[type="checkbox"] {
+      accent-color: var(--color-accent);
+    }
+  }
+
+  /* ── Key / legend ────────────────────────────────────────────────── */
+  .ms-key {
+    background-color: var(--color-surface);
+    border: 0.0625rem solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-block-end: var(--space-md);
+
+    & h3 {
+      font-size: var(--text-base);
+      margin-block-end: var(--space-sm);
+    }
+
+    & h4 {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      margin-block: var(--space-xs) var(--space-2xs);
+    }
+  }
+
+  .ms-key__section {
+    margin-block-end: var(--space-sm);
+
+    &:last-child {
+      margin-block-end: 0;
+    }
+  }
+
+  .ms-key__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-lg);
+
+    & li {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+  }
+
+  /* Key swatches for diagram node types */
+  .ms-key__swatch {
+    display: inline-block;
+    inline-size: 0.75rem;
+    block-size: 0.75rem;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+  }
+
+  .ms-key__swatch--person {
+    background-color: var(--color-accent);
+  }
+
+  .ms-key__swatch--institution {
+    background-color: oklch(55% 0.12 145);
+  }
+
+  .ms-key__swatch--location {
+    background-color: oklch(60% 0.1 180);
+  }
+
+  .ms-key__swatch--program {
+    background-color: oklch(55% 0.12 60);
+  }
+
+  /* Key lines for edge layers */
+  .ms-key__line {
+    display: inline-block;
+    inline-size: 1.5rem;
+    block-size: 0;
+    border-block-start: 0.125rem solid var(--color-text-muted);
+    flex-shrink: 0;
+  }
+
+  .ms-key__line--tight {
+    border-block-start-style: solid;
+  }
+
+  .ms-key__line--medium {
+    border-block-start-style: dashed;
+  }
+
+  .ms-key__line--corkboard {
+    border-block-start-style: dotted;
+    opacity: 0.5;
+  }
+
+  /* Key dots for timeline event types */
+  .ms-key__dot {
+    display: inline-block;
+    inline-size: 0.625rem;
+    block-size: 0.625rem;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+  }
+
+  .ms-key__dot--disappearance {
+    background-color: oklch(55% 0.15 30);
+  }
+
+  .ms-key__dot--death {
+    background-color: oklch(40% 0.12 0);
+  }
+
+  .ms-key__dot--body_found {
+    background-color: oklch(45% 0.1 300);
+  }
+
+  .ms-key__dot--suspect_arrested {
+    background-color: oklch(55% 0.12 145);
+  }
+
+  .ms-key__dot--investigation {
+    background-color: oklch(55% 0.1 248);
+  }
+
+  .ms-key__dot--institutional {
+    background-color: oklch(55% 0.08 200);
+  }
+
+  .ms-key__dot--political {
+    background-color: oklch(55% 0.12 60);
+  }
+
+  .ms-key__dot--media {
+    background-color: oklch(60% 0.08 280);
+  }
+
+  .ms-key__dot--other {
+    background-color: var(--color-text-muted);
+  }
+
+  /* ── Tooltip ─────────────────────────────────────────────────────── */
+  .ms-tooltip {
+    position: absolute;
+    z-index: 50;
+    max-inline-size: 22rem;
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--color-surface);
+    border: 0.0625rem solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 0.25rem 1rem color-mix(in oklch, var(--color-text) 12%, transparent);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    pointer-events: none;
+
+    &[hidden] {
+      display: none;
+    }
+
+    & strong {
+      display: block;
+      margin-block-end: var(--space-2xs);
+    }
+  }
+
+  /* ── Noscript fallback ───────────────────────────────────────────── */
+  .ms-noscript {
+    padding: var(--space-lg);
+    background-color: var(--color-surface);
+    border: 0.0625rem solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+
+  /* ── Mobile: timeline & key ──────────────────────────────────────── */
+  @media (max-width: 37.5rem) {
+    .ms-key__list {
+      gap: var(--space-2xs) var(--space-md);
+      font-size: var(--text-xs, 0.75rem);
+    }
+
+    .ms-key {
+      padding: var(--space-sm);
+    }
+
+    .ms-tooltip {
+      max-inline-size: calc(100vw - 2rem);
+      font-size: var(--text-xs, 0.75rem);
+    }
+  }
+
+  /* ── Print styles ────────────────────────────────────────────────── */
+  @media print {
+    .ms-nav,
+    .ms-controls,
+    .ms-interactive,
+    .ms-prev-next,
+    .ms-case-nav {
+      display: none;
+    }
+
+    .ms-layout {
+      display: block;
+    }
+
+    .ms-toc {
+      position: static;
+      page-break-after: always;
+    }
+
+    .ms-tier,
+    .ms-confidence {
+      border: 0.0625rem solid currentColor;
+      padding-inline: 0.2em;
+    }
+  }
+
+  /* ── Diagram node interactivity hints ─────────────────────────────── */
+  .ms-interactive__canvas svg g g {
+    transition: opacity 0.3s ease;
+  }
+
+  /* ── Reduced motion ──────────────────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .ms-nav__links a,
+    .ms-toc__item a,
+    .ms-prev-next__link,
+    .ms-case-nav a,
+    .ms-analysis-nav a {
+      transition: none;
+    }
+
+    .ms-interactive__canvas svg g g {
+      transition: none;
+    }
+  }
+
+  /* ── Tables (wrapped by renderer in build/missing-scientists.ts) ──── */
+  .ms-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-inline-size: 100%;
+    margin-block: var(--space-md);
+    border: 0.0625rem solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  .ms-prose .ms-table-wrap > table {
+    inline-size: 100%;
+    min-inline-size: max-content;
+    border-collapse: collapse;
+
+    @media (min-width: 48rem) {
+      min-inline-size: 0;
+      table-layout: fixed;
+    }
+    font-size: var(--text-sm);
+  }
+
+  .ms-prose .ms-table-wrap :is(th, td) {
+    padding: var(--space-xs) var(--space-sm);
+    border-block-end: 0.0625rem solid var(--color-border);
+    vertical-align: top;
+    text-align: start;
+    overflow-wrap: anywhere;
+  }
+
+  .ms-prose .ms-table-wrap th {
+    font-weight: 600;
+    background-color: color-mix(in oklch, var(--color-surface) 60%, transparent);
+  }
+
+  /* Case Index is the only 7-column table (dossier.md:68-80).
+     Hide the "Case File" column under narrow viewports — the Name
+     column already links to the case page. */
+  @media (max-width: 37.5rem) {
+    .ms-prose .ms-table-wrap table:has(th:nth-child(7)) :is(th, td):nth-child(7) {
+      display: none;
+    }
+  }
+}

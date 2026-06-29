@@ -1,0 +1,110 @@
+@layer tokens {
+  /*
+    Palette: "Case File" — the Missing Scientists dossier skin
+    —————————————————————————————————————————————————————————
+    Dark mode is the default (set on <html data-theme="dark">): a
+    near-black terminal field with phosphor-green text and a brighter
+    terminal-green accent. The redaction bars, tier badges, and
+    confidence ratings already defined in missing-scientists.css read
+    naturally against it.
+
+    Light mode is a "manila folder" case-file look: warm tan paper,
+    near-black typewriter ink, deep-green accent.
+
+    Only this file (tokens) and nav.css carry the skin — every other
+    style is inherited intact from the upstream engine and themes off
+    these variables.
+
+    Contrast (WCAG 2.1), spot-checked:
+      Dark:  accent on bg ≈ 9:1   (AAA ✓)
+      Light: ink on manila ≈ 11:1 (AAA ✓)
+    —————————————————————————————————————————————————————————
+  */
+
+  :root {
+    /* ── Colors — light mode (manila case file) ── */
+    --color-bg:           oklch(90% 0.038 85);    /* manila tan */
+    --color-surface:      oklch(94% 0.032 85);    /* lighter folder stock */
+    --color-text:         oklch(22% 0.020 60);    /* typewriter ink */
+    --color-text-muted:   oklch(45% 0.028 70);    /* faded ink */
+    --color-accent:       oklch(46% 0.13 150);    /* deep field green */
+    --color-accent-hover: oklch(38% 0.13 150);
+    --color-border:       oklch(74% 0.040 85);    /* folder edge */
+    --color-code-bg:      oklch(86% 0.040 85);
+
+    /*
+      On-accent: text/icon sitting ON an accent-colored fill (buttons,
+      badges). Pale on the dark light-mode green.
+    */
+    --color-on-accent:    oklch(96% 0.02 85);
+
+    /* ── Type scale — fluid via clamp(), ~1.25 modular ratio ── */
+    --text-xs:   clamp(0.70rem,  0.68rem + 0.10vw, 0.75rem);
+    --text-sm:   clamp(0.875rem, 0.84rem + 0.17vw, 0.9375rem);
+    --text-base: clamp(1rem,     0.96rem + 0.20vw, 1.0625rem);
+    --text-lg:   clamp(1.125rem, 1.06rem + 0.30vw, 1.25rem);
+    --text-xl:   clamp(1.25rem,  1.14rem + 0.55vw, 1.5625rem);
+    --text-2xl:  clamp(1.5625rem,1.34rem + 1.12vw, 2.0625rem);
+    --text-3xl:  clamp(1.9531rem,1.56rem + 1.96vw, 2.8125rem);
+
+    /* ── Font stacks ──
+       Headings go monospace for the redacted-report / terminal feel;
+       body stays humanist sans for long-form readability; mono for code
+       and the tier/confidence badge accents. */
+    --font-heading: ui-monospace, 'Cascadia Code', 'Fira Code', 'SFMono-Regular', Menlo, monospace;
+    --font-body:    ui-sans-serif, system-ui, sans-serif;
+    --font-mono:    ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+
+    /* ── Spacing — rem-based, ~1.5 ratio ── */
+    --space-2xs: 0.25rem;
+    --space-xs:  0.5rem;
+    --space-sm:  0.75rem;
+    --space-md:  1rem;
+    --space-lg:  1.5rem;
+    --space-xl:  2.25rem;
+    --space-2xl: 3.375rem;
+    --space-3xl: 5rem;
+
+    /* ── Border radius — squared off for a documentary/file feel ── */
+    --radius-sm:   0.125rem;
+    --radius-md:   0.25rem;
+    --radius-lg:   0.5rem;
+    --radius-full: 9999px;
+
+    /* ── Transitions ── */
+    --duration-fast:   150ms;
+    --duration-normal: 300ms;
+    --duration-slow:   500ms;
+
+    /* ── Container ── */
+    --container-max:     75rem;
+    --container-padding: clamp(1rem, 5vw, 3rem);
+  }
+
+  /* ── Dark mode (default skin) ──
+     Near-black terminal field, phosphor text, terminal-green accent. */
+  [data-theme="dark"] {
+    --color-bg:           oklch(15% 0.012 155);   /* near-black, faint green */
+    --color-surface:      oklch(20% 0.016 155);   /* raised panel */
+    --color-text:         oklch(92% 0.022 150);   /* phosphor white-green */
+    --color-text-muted:   oklch(66% 0.030 150);   /* dim phosphor */
+    --color-accent:       oklch(80% 0.165 150);   /* terminal green */
+    --color-accent-hover: oklch(88% 0.150 150);   /* brighter green */
+    --color-on-accent:    oklch(15% 0.020 155);   /* dark text on green */
+    --color-border:       oklch(30% 0.022 155);   /* subtle green divider */
+    --color-code-bg:      oklch(18% 0.016 155);   /* code block fill */
+  }
+
+  /* ── Light mode (explicit override, mirrors :root) ── */
+  [data-theme="light"] {
+    --color-bg:           oklch(90% 0.038 85);
+    --color-surface:      oklch(94% 0.032 85);
+    --color-text:         oklch(22% 0.020 60);
+    --color-text-muted:   oklch(45% 0.028 70);
+    --color-accent:       oklch(46% 0.13 150);
+    --color-accent-hover: oklch(38% 0.13 150);
+    --color-on-accent:    oklch(96% 0.02 85);
+    --color-border:       oklch(74% 0.040 85);
+    --color-code-bg:      oklch(86% 0.040 85);
+  }
+}
