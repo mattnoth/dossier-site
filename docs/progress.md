@@ -9,6 +9,50 @@
 - [x] Phase 5 — Content & templates
 - [x] Phase 6 — Integration, polish, deploy
 
+## Last session — 2026-06-29 (multi-dossier rebrand: two-tier header, prototype)
+
+**Context:** Matt wants the site to host *multiple* dossiers, with "Missing Scientists" as
+one of them. The repo/site was hardcoded to the single dossier. Working umbrella brand:
+**"Anomaly Dossiers"** (placeholder — not final). Approach agreed: prototype the two-tier
+header on the existing single-dossier setup first, then generalize. Table redesign deferred.
+
+**Done (two-tier header chrome, MS still served at root):**
+- `build/site.config.ts` — added `brandName` ("Anomaly Dossiers") + `brandTagline` as the
+  umbrella identity, separate from `siteName` ("The Missing Scientists", the active dossier).
+  Swap `brandName` when the real name is settled.
+- **Tier 1 (brand bar):** `base.html` header now leads with `ANOMALY DOSSIERS` → `/`, plus
+  the genuinely shared links (Dossiers / Methodology / About) + theme toggle. Footer colophon
+  switched `{{site_name}}` → `{{brand_name}}`.
+- **Tier 2 (dossier bar):** new `{{dossier_nav}}` slot rendered into the sticky header by
+  `generateDossierBar()` in `build/missing-scientists.ts` — shows `MISSING SCIENTISTS ·` label
+  + the dossier's internal sections (Overview/Diagram/Timeline/Connections/Hypotheses/Foreign
+  Intel/Sources) with active-section highlighting. Methodology + Transparency graduated up to
+  Tier 1 as shared pages, so they were dropped from `NAV_ITEMS`.
+- Removed the now-redundant in-content `{{ms_nav}}` from `ms-page.html`, `ms-diagram.html`,
+  `ms-timeline.html` (it moved into the header).
+- CSS: new `.site-brandbar`, `.dossier-bar`, `.dossier-bar__label` in `nav.css`; retargeted the
+  header grid rule in `layout.css` from `.site-header .container` → `.site-brandbar .container`
+  (the header now holds two `.container`s). `.dossier-bar .ms-nav` strips the in-article
+  border/margins and reuses the horizontal-scroll behaviour.
+- `npm run build` passes (typecheck + lint-classes clean, 20 pages).
+
+**KNOWN ISSUE flagged by Matt (investigate next):** the left TOC pane (`.ms-toc`) "isn't
+rendering" properly. Prime suspect: the header is now **two rows tall**, but `.ms-toc`'s sticky
+offset is hardcoded `inset-block-start: 5rem` (and `max-block-size: calc(100dvh - 6rem)`) tuned
+for the old single-row header — likely tucks under / clips behind the taller header at ≥64rem.
+Check header height vs. those offsets first. (TOC pipeline itself — `addHeadingIds` → `{{toc}}`
+— was not touched this session.) Matt's read: "header is a bit confusing however, workable, decent start."
+
+**Still to do — the "generalize" pass:**
+1. Namespace MS under `/missing-scientists/` (flip `BASE` in `site.config.ts`). Breaks two
+   hardcoded-root spots that must move with it: the `data-src="/data/..."` attrs in
+   `ms-diagram.html`/`ms-timeline.html`, and the `const BASE = ''` in `ms-diagram.ts`/
+   `ms-timeline.ts` (used for case-link `window.location.href`).
+2. Real umbrella landing at `/` (a dossier directory) instead of the MS overview.
+3. A `dossiers[]` registry in config so Tier-2 sections + dossier label aren't hardcoded;
+   turn `missing-scientists.ts` into a generic per-dossier generator that loops it.
+4. Table redesign (prose-breakout grid — let tables/diagrams escape the 75ch measure). Deferred.
+
 ## Last session — 2026-04-23 (redacted click-to-reveal fix + mobile layout fixes)
 - Fixed redacted censor bar click-to-reveal: replaced stuck-open `:focus-visible`/`:focus-within` CSS reveal with a JS click-triggered 600ms peek animation that returns to hidden state (`src/styles/components.css`, `src/ts/main.ts`).
 - Fixed redacted bar dark mode: reverted from `var(--color-text)`/`var(--color-bg)` tokens to fixed ink colors (`oklch(11% 0.015 260)` bar, `oklch(97% 0.004 80)` revealed text) so bar stays dark in both themes.

@@ -20,6 +20,7 @@ import { renderPage } from "./templates.ts";
 import {
   SITE_ORIGIN,
   BASE,
+  brandName,
   siteName,
   author,
   social,
@@ -87,7 +88,13 @@ const CASE_NAMES: Readonly<Record<string, string>> = {
   grillmair: "Carl Grillmair",
 };
 
-// ── Section navigation ────────────────────────────────────────────────
+// ── Tier-2 dossier section navigation ─────────────────────────────────
+//
+// Site-wide chrome (Methodology, About/Transparency) lives in the Tier-1
+// brand bar (base.html). This bar carries only sections internal to the
+// active dossier — it renders into base.html's {{dossier_nav}} slot.
+
+const DOSSIER_LABEL = "Missing Scientists";
 
 const NAV_ITEMS = [
   { href: `${BASE}/`, label: "Overview" },
@@ -96,22 +103,28 @@ const NAV_ITEMS = [
   { href: `${BASE}/analysis/connections/`, label: "Connections" },
   { href: `${BASE}/analysis/hypotheses/`, label: "Hypotheses" },
   { href: `${BASE}/analysis/foreign-intel/`, label: "Foreign Intel" },
-  { href: `${BASE}/methodology/`, label: "Methodology" },
   { href: `${BASE}/sources/`, label: "Sources" },
-  { href: `${BASE}/transparency/`, label: "Transparency" },
 ] as const;
 
-function generateNav(currentPath: string): string {
+/** Tier-2 context bar: dossier identity + its internal sections. Rendered
+ *  into the sticky header (base.html {{dossier_nav}}) so it travels with
+ *  the active dossier and highlights the current section. */
+function generateDossierBar(currentPath: string): string {
   const items = NAV_ITEMS.map(item => {
     const isCurrent = currentPath === item.href;
     return `<li><a href="${item.href}"${isCurrent ? ' aria-current="page"' : ''}>${item.label}</a></li>`;
-  }).join("\n          ");
+  }).join("\n            ");
 
-  return `<nav class="ms-nav" aria-label="Research navigation">
-      <ul class="ms-nav__links">
-          ${items}
-      </ul>
-  </nav>`;
+  return `<div class="dossier-bar">
+    <div class="container">
+      <a href="${BASE}/" class="dossier-bar__label">${DOSSIER_LABEL}</a>
+      <nav class="ms-nav" aria-label="Dossier sections">
+        <ul class="ms-nav__links">
+            ${items}
+        </ul>
+      </nav>
+    </div>
+  </div>`;
 }
 
 function generateCaseList(currentSlug?: string): string {
@@ -426,7 +439,9 @@ async function generatePage(
   const html = await renderPage(templateName, {
     social_links: SOCIAL_LINKS_HTML,
     site_name: siteName,
+    brand_name: brandName,
     footer_note: footerNote,
+    dossier_nav: "",
     ...slots,
   });
   if (html === null) {
@@ -473,7 +488,7 @@ async function generateLandingPage(version: string, lastUpdated: string): Promis
       },
     }),
     page_title: pageTitle,
-    ms_nav: generateNav(`${BASE}/`),
+    dossier_nav: generateDossierBar(`${BASE}/`),
     breadcrumb: "",
     meta: "",
     analysis_nav: "",
@@ -527,7 +542,7 @@ async function generateCasePages(): Promise<void> {
         },
       }),
       page_title: title || name,
-      ms_nav: generateNav(`${BASE}/cases/${slug}/`),
+      dossier_nav: generateDossierBar(`${BASE}/cases/${slug}/`),
       breadcrumb: `<nav class="ms-breadcrumb" aria-label="Breadcrumb"><a href="${BASE}/">Overview</a> &rsaquo; <span aria-current="page">${name}</span></nav>`,
       meta: "",
       analysis_nav: "",
@@ -578,7 +593,7 @@ async function generateAnalysisPages(): Promise<void> {
         },
       }),
       page_title: title || label,
-      ms_nav: generateNav(`${BASE}/analysis/${slug}/`),
+      dossier_nav: generateDossierBar(`${BASE}/analysis/${slug}/`),
       breadcrumb: `<nav class="ms-breadcrumb" aria-label="Breadcrumb"><a href="${BASE}/">Overview</a> &rsaquo; <span aria-current="page">Analysis</span></nav>`,
       meta: "",
       analysis_nav: navHtml,
@@ -599,7 +614,7 @@ async function generateDiagramPage(): Promise<void> {
     page_url: diagramUrl,
     ...seoSlots({ pageUrl: diagramUrl }),
     page_title: "Connection Diagram",
-    ms_nav: generateNav(`${BASE}/diagram/`),
+    dossier_nav: generateDossierBar(`${BASE}/diagram/`),
   }, `${OUT_PREFIX}diagram/index.html`);
 }
 
@@ -611,7 +626,7 @@ async function generateTimelinePage(): Promise<void> {
     page_url: timelineUrl,
     ...seoSlots({ pageUrl: timelineUrl }),
     page_title: "Event Timeline",
-    ms_nav: generateNav(`${BASE}/timeline/`),
+    dossier_nav: generateDossierBar(`${BASE}/timeline/`),
   }, `${OUT_PREFIX}timeline/index.html`);
 }
 
@@ -659,7 +674,7 @@ async function generateSourcesPage(): Promise<void> {
     page_url: sourcesUrl,
     ...seoSlots({ pageUrl: sourcesUrl }),
     page_title: "Sources & Commentary",
-    ms_nav: generateNav(`${BASE}/sources/`),
+    dossier_nav: generateDossierBar(`${BASE}/sources/`),
     breadcrumb: `<nav class="ms-breadcrumb" aria-label="Breadcrumb"><a href="${BASE}/">Overview</a> &rsaquo; <span aria-current="page">Sources</span></nav>`,
     meta: "",
     analysis_nav: "",
@@ -683,7 +698,7 @@ async function generateMethodologyPage(): Promise<void> {
     page_url: methodologyUrl,
     ...seoSlots({ pageUrl: methodologyUrl }),
     page_title: title || "Methodology",
-    ms_nav: generateNav(`${BASE}/methodology/`),
+    dossier_nav: generateDossierBar(`${BASE}/methodology/`),
     breadcrumb: `<nav class="ms-breadcrumb" aria-label="Breadcrumb"><a href="${BASE}/">Overview</a> &rsaquo; <span aria-current="page">Methodology</span></nav>`,
     meta: "",
     analysis_nav: "",
@@ -734,7 +749,7 @@ async function generateTransparencyPage(): Promise<void> {
     page_url: transparencyUrl,
     ...seoSlots({ pageUrl: transparencyUrl }),
     page_title: "Transparency",
-    ms_nav: generateNav(`${BASE}/transparency/`),
+    dossier_nav: generateDossierBar(`${BASE}/transparency/`),
     breadcrumb: `<nav class="ms-breadcrumb" aria-label="Breadcrumb"><a href="${BASE}/">Overview</a> &rsaquo; <span aria-current="page">Transparency</span></nav>`,
     meta: "",
     analysis_nav: "",

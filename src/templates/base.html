@@ -44,19 +44,17 @@
     </div>
 
     <header class="site-header nav" data-module="nav">
-      <div class="container">
-        <a href="/" class="nav__logo">Missing<span> Scientists</span></a>
+      <!-- Tier 1: umbrella brand — shared chrome across every dossier -->
+      <div class="site-brandbar">
+        <div class="container">
+        <a href="/" class="nav__logo">Anomaly<span> Dossiers</span></a>
 
         <!-- Hidden checkbox — CSS-only mobile menu toggle -->
         <input type="checkbox" id="nav-toggle" aria-hidden="true">
 
         <nav aria-label="Site navigation">
           <ul class="nav__links">
-            <li><a href="/">Cases</a></li>
-            <li><a href="/analysis/connections/">Analysis</a></li>
-            <li><a href="/diagram/">Diagram</a></li>
-            <li><a href="/timeline/">Timeline</a></li>
-            <li><a href="/sources/">Sources</a></li>
+            <li><a href="/">Dossiers</a></li>
             <li><a href="/methodology/">Methodology</a></li>
             <li><a href="/transparency/">About</a></li>
           </ul>
@@ -87,7 +85,11 @@
             <span></span>
           </label>
         </div>
+        </div>
       </div>
+
+      <!-- Tier 2: active-dossier context bar — empty on umbrella pages -->
+      {{dossier_nav}}
     </header>
 
     <main id="content" data-module="scroll-reveal">
@@ -102,7 +104,7 @@
           </ul>
         </nav>
         <p>{{footer_note}}</p>
-        <p>&copy; 2026 {{site_name}} &middot; AI-assisted research &middot; Built with vanilla TS + CSS</p>
+        <p>&copy; 2026 {{brand_name}} &middot; AI-assisted research &middot; Built with vanilla TS + CSS</p>
       </div>
     </footer>
   </body>

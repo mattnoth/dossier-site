@@ -152,7 +152,8 @@
     -webkit-backdrop-filter: blur(0.5rem);
     backdrop-filter: blur(0.5rem);
 
-    & .container {
+    /* Tier-1 brand row only — the Tier-2 dossier bar lays itself out (nav.css). */
+    & .site-brandbar > .container {
       display: flex;
       align-items: center;
       justify-content: space-between;

@@ -22,7 +22,14 @@ export const SITE_ORIGIN =
  */
 export const BASE: string = "";
 
-/** Site identity. */
+/** Umbrella publication identity (Tier-1 brand chrome).
+ *  The site hosts multiple dossiers; "Missing Scientists" is one of them.
+ *  WORKING TITLE — swap the string here when the real name is settled. */
+export const brandName = "Anomaly Dossiers";
+export const brandTagline =
+  "Structured, evidence-based investigations into unexplained deaths, disappearances, and anomalies.";
+
+/** Active-dossier identity. Used in page <title>s and the Tier-2 dossier bar. */
 export const siteName = "The Missing Scientists";
 export const tagline =
   "A structured, evidence-based research dossier on deaths and disappearances of U.S. defense and advanced-research scientists.";

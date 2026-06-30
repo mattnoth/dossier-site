@@ -6,6 +6,11 @@ Only log decisions that are **non-obvious or reversible**. "We used TypeScript" 
 
 ---
 
+## 2026-06-29 — Site becomes a multi-dossier publication; two-tier header
+**Context:** The site was built as the standalone home for one dossier (Missing Scientists), served at root with a single nav bar. Matt now wants to publish additional dossiers built from the same research pipeline, so the site needs an umbrella identity above the individual dossiers, and the nav has to separate site-wide concerns from per-dossier ones.
+**Decision:** Introduce an umbrella brand (working title **"Anomaly Dossiers"**, `brandName` in `site.config.ts`) distinct from the active-dossier name (`siteName`). Split navigation into two tiers: **Tier 1** = persistent brand bar with site-wide links (the directory, Methodology, About) since methodology + AI-disclosure are identical across every dossier; **Tier 2** = a contextual dossier bar (label + that dossier's sections) rendered into the sticky header via a `{{dossier_nav}}` slot, empty on umbrella pages. Prototype this header on the still-single-dossier setup first; defer namespacing (`/missing-scientists/`), the umbrella landing, a `dossiers[]` registry, and the table redesign to a follow-up "generalize" pass.
+**Consequences:** Tier-2 sections must be declared per-dossier (a future dossier may not be "cases"-structured), which is why the generalize pass needs a registry rather than the current hardcoded `NAV_ITEMS`. The taller two-row header changed the page's effective top offset — surfaced a TOC sticky-offset regression (`.ms-toc { inset-block-start: 5rem }`) to fix next session. `brandName` is a one-line swap when the real name is chosen.
+
 ## 2026-04-09 — Use Claude Code subagents for domain isolation, not parallelism
 **Context:** Matt is new to Claude Code and wanted to try subagents on this project. The 6-prompt build chain could be run as one big session or as 6 sessions with specialized subagents per domain.
 **Decision:** Six specialist subagents (`build-specialist`, `css-specialist`, `ts-specialist`, `content-specialist`, `reviewer`, `progress-tracker`) scoped to single directories with forbidden-directory rules. Phases run sequentially, one per Claude Code session.
