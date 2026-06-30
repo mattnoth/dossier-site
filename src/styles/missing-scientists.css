@@ -172,9 +172,13 @@
     position: relative;
 
     @media (min-width: 64rem) {
+      /* Clear the sticky two-row header (brand bar + dossier bar). Its height
+         is published live as --site-header-height by the nav module; the
+         fallback covers the pre-hydration / no-JS case. --space-md is the
+         breathing gap above and below the pinned TOC. */
       position: sticky;
-      inset-block-start: 5rem;
-      max-block-size: calc(100dvh - 6rem);
+      inset-block-start: calc(var(--site-header-height, 6rem) + var(--space-md));
+      max-block-size: calc(100dvh - var(--site-header-height, 6rem) - 2 * var(--space-md));
       overflow-y: auto;
     }
 
