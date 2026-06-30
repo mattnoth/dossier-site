@@ -16,6 +16,35 @@
 [build.processing.html]
   pretty_urls = true
 
+# Redirects: the Missing Scientists dossier moved from the site root to its own
+# namespace (/missing-scientists/) in the multi-dossier rebrand. Forward old
+# root-served section URLs so external links / bookmarks don't 404. The root "/"
+# now serves the dossier directory; /methodology/ and /transparency/ stay at root.
+[[redirects]]
+  from = "/cases/*"
+  to = "/missing-scientists/cases/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/analysis/*"
+  to = "/missing-scientists/analysis/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/diagram/*"
+  to = "/missing-scientists/diagram/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/timeline/*"
+  to = "/missing-scientists/timeline/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/sources/*"
+  to = "/missing-scientists/sources/:splat"
+  status = 301
+
 # Cache: crawl/index files — short TTL so re-deploys propagate quickly
 [[headers]]
   for = "/sitemap.xml"

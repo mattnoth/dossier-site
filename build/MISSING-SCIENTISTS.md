@@ -1,12 +1,30 @@
-# Missing Scientists Section
+# Dossier generator (multi-dossier publication)
 
-Website section rendering the research dossier on deaths and disappearances of U.S. defense and advanced-research scientists at `/projects/missing-scientists/`.
+`build/missing-scientists.ts` generates the whole publication: a Tier-1 umbrella
+(the dossier directory at `/`, shared Methodology + About pages at the root) plus
+each dossier in the `dossiers[]` registry (`build/site.config.ts`) rendered into
+its own namespace. The Missing Scientists dossier lives at `/missing-scientists/`.
 
-## How it consumes the research repo
+> The file is still named `missing-scientists.ts` for historical reasons; its
+> internals are a generic per-dossier generator (`generateDossier(d)`) that loops
+> the registry. Routing, identity, and the Tier-2 section bar are driven by the
+> registry; the per-dossier content shape (cases/, analysis/, sources appendices,
+> glossary, tier badges) currently assumes the Missing Scientists structure — a
+> differently-shaped dossier would need the generator extended.
 
-`build/missing-scientists.ts` reads markdown and JSON from the sibling research repo at `../research-missing-scientists/` (override with `MS_RESEARCH_DIR` env var).
+## How it consumes a research repo
 
-At build time it reads all markdown files, converts to HTML via `marked`, post-processes source-tier badges and confidence ratings, generates static pages via the template system, and copies diagram/timeline JSON for D3 to fetch at runtime.
+Each registry entry points at a research source dir via `researchPath` (relative
+to `build/`), with an optional env override (`researchDirEnv`, e.g.
+`MS_RESEARCH_DIR`). The Missing Scientists entry reads from the sibling repo at
+`../research`. A dossier whose research repo is absent is skipped (so Netlify CI
+builds the chrome without the content).
+
+At build time the generator reads markdown, converts to HTML via `marked`,
+post-processes source-tier badges + confidence ratings, rewrites internal `.md`
+links to namespaced site URLs, generates static pages via the template system,
+and copies each dossier's diagram/timeline JSON to `{base}/data/` for D3 to fetch
+at runtime. The shared Methodology + About pages are sourced from `primaryDossier`.
 
 ## Rebuild after research updates
 
@@ -14,11 +32,21 @@ At build time it reads all markdown files, converts to HTML via `marked`, post-p
 npm run build
 ```
 
-The build reads the research repo fresh on every run.
+The build reads the research repo(s) fresh on every run.
 
 ## Pages generated
 
-- Landing, 11 case pages, 3 analysis pages, diagram, timeline, methodology, sources, transparency (20 pages total)
+- Umbrella: directory (`/`), `/methodology/`, `/transparency/`
+- Per dossier (`/missing-scientists/`): overview, 11 case pages, 3 analysis pages,
+  diagram, timeline, sources
+
+## Routing model
+
+- **Tier 1** (shared): brand bar + Methodology + About — served at the site root.
+- **Tier 2** (per-dossier): the dossier bar (label + `sections`) rendered into the
+  sticky header via base.html's `{{dossier_nav}}` slot; empty on umbrella pages.
+- Templates are base-aware via a `{{base}}` slot; the D3 modules read their
+  dossier base from `data-base` on the mount element.
 
 ## Dependencies added
 
@@ -26,7 +54,8 @@ The build reads the research repo fresh on every run.
 
 ## Key files
 
+- `build/site.config.ts` — umbrella brand + `dossiers[]` registry
 - `build/missing-scientists.ts` — page generator
-- `src/templates/ms-page.html`, `ms-diagram.html`, `ms-timeline.html` — templates
-- `src/styles/missing-scientists.css` — scoped CSS
-- `src/ts/modules/ms-diagram.ts`, `ms-timeline.ts` — D3 modules
+- `src/templates/base.html`, `umbrella.html`, `ms-page.html`, `ms-diagram.html`, `ms-timeline.html` — templates
+- `src/styles/missing-scientists.css`, `nav.css` — scoped + nav CSS
+- `src/ts/modules/ms-diagram.ts`, `ms-timeline.ts` — D3 modules (base-aware)

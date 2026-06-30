@@ -42,8 +42,10 @@ interface SimEdge extends d3.SimulationLinkDatum<SimNode> {
 
 // ── Constants ─────────────────────────────────────────────────────────
 
-// Site is rooted at "/" — case links resolve from the root.
-const BASE = '';
+// Base path for case links. Set from the mount element's data-base attribute
+// (the dossier the diagram belongs to), so case links resolve under the
+// dossier's namespace rather than the site root. One diagram per page.
+let base = '';
 
 const NODE_COLORS: Record<string, string> = {
   person:      'oklch(55% 0.14 248)',
@@ -86,6 +88,8 @@ export function mount(el: HTMLElement): void {
   const tooltip = el.querySelector<HTMLElement>('.ms-tooltip');
   const controls = el.querySelector<HTMLElement>('.ms-controls');
   if (!canvas) return;
+
+  base = el.dataset['base'] ?? '';
 
   const src = el.dataset['src'];
   if (!src) return;
@@ -334,7 +338,7 @@ function render(
       event.stopPropagation();
       if (d.metadata.case_slug) {
         // Person nodes: navigate to case page
-        window.location.href = `${BASE}/cases/${d.metadata.case_slug}/`;
+        window.location.href = `${base}/cases/${d.metadata.case_slug}/`;
       } else {
         // Non-person nodes: toggle focus highlight
         applyFocus(focusedNodeId === d.id ? null : d.id);

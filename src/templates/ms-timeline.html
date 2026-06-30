@@ -4,7 +4,7 @@
       <h1>{{page_title}}</h1>
       <p class="ms-subtitle">Chronological timeline of all documented events. Scroll to navigate, click events for case details.</p>
     </header>
-    <div class="ms-interactive" data-module="ms-timeline" data-src="/data/timeline-data.json">
+    <div class="ms-interactive" data-module="ms-timeline" data-src="{{base}}/data/timeline-data.json" data-base="{{base}}">
       <div class="ms-key" id="timeline-key">
         <h3>Key</h3>
         <ul class="ms-key__list">
@@ -24,11 +24,11 @@
     </div>
     <noscript>
       <div class="ms-noscript">
-        <p>This interactive timeline requires JavaScript. Case details are in the <a href="/">case index</a>.</p>
+        <p>This interactive timeline requires JavaScript. Case details are in the <a href="{{base}}/">case index</a>.</p>
       </div>
     </noscript>
     <footer class="ms-page-footer">
-      <a href="/" class="back-link">&larr; Back to overview</a>
+      <a href="{{base}}/" class="back-link">&larr; Back to overview</a>
     </footer>
   </article>
 </div>

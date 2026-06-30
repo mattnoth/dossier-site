@@ -9,6 +9,50 @@
 - [x] Phase 5 — Content & templates
 - [x] Phase 6 — Integration, polish, deploy
 
+## Last session — 2026-06-30 (multi-dossier generalize pass + TOC fix)
+
+**Context:** Continuation of the 2026-06-29 two-tier-header prototype. Matt chose
+"full pass." Branch `feat/multi-dossier-two-tier-header`. Build green throughout
+(`npm run build` — typecheck + lint-classes clean, 21 pages). Not pushed/deployed.
+
+**Done — TOC clip fix (the flagged bug):**
+- `.ms-toc` sticky offset no longer hardcoded for the old single-row header. The
+  nav module (`src/ts/modules/nav.ts`, already mounted on `.site-header`) now
+  measures `el.offsetHeight` and publishes `--site-header-height` on `:root`
+  (re-measured on resize + after `document.fonts.ready`). `.ms-toc` desktop rule
+  (`src/styles/missing-scientists.css`) reads it: `inset-block-start: calc(var(--site-header-height, 6rem) + var(--space-md))`
+  and a matching `max-block-size`. `6rem` fallback covers pre-hydration/no-JS.
+  Self-corrects through future header changes instead of needing a re-tune.
+
+**Done — generalize pass (items 1–3; item 4 table redesign still deferred):**
+- **Namespacing:** MS now served under `/missing-scientists/`. Global `BASE`
+  removed; each dossier carries its own `base`. `data-src` in the diagram/timeline
+  templates is `{{base}}/data/…` + new `data-base="{{base}}"`; the D3 modules read
+  `el.dataset['base']` (module-level `let base`) instead of `const BASE = ''`.
+  `ms-page.html` back-link and diagram/timeline noscript/back links are `{{base}}`-aware.
+- **`dossiers[]` registry** in `build/site.config.ts` (`Dossier` interface:
+  base/label/name/tagline/blurb/status/sections/researchPath). `missing-scientists.ts`
+  is now a generic `generateDossier(d)` looping the registry; Tier-2 label/sections
+  come from the entry.
+- **Umbrella landing at `/`** (`src/templates/umbrella.html`, `generateUmbrellaLanding()`)
+  — dossier directory, cards from the registry, only shown if the research repo is
+  present. Reuses existing `.hero`/`.card`/`.grid-auto`/`.tag` → no new CSS.
+- **Shared Tier-1 pages** Methodology + About generated once at root (from
+  `primaryDossier`), no Tier-2 bar. `postProcess` rewrites README/logs links to
+  root `/methodology/` `/transparency/`, case/analysis links to the dossier base.
+- `netlify.toml`: 301s for old root section URLs (`/cases/*` etc. → `/missing-scientists/…`).
+- Refreshed stale `build/MISSING-SCIENTISTS.md`.
+
+**Known limitation:** the per-dossier generator still assumes the MS *content shape*
+(cases/analysis/sources/glossary/tier-badges). Routing + identity are registry-driven,
+but a differently-structured second dossier needs the generator extended.
+
+**Not done / deferred:** item 4 (table redesign — prose-breakout grid). Header chrome
+design left as-is per Matt ("a bit confusing, workable" — still reviewing). Default OG
+image still renders `siteName` ("The Missing Scientists") via `generate-images.ts`;
+arguably should be the umbrella brand now. `.claude/` (agents/skills/launch.json) is
+untracked project tooling — left uncommitted (unrelated to this feature).
+
 ## Last session — 2026-06-29 (multi-dossier rebrand: two-tier header, prototype)
 
 **Context:** Matt wants the site to host *multiple* dossiers, with "Missing Scientists" as

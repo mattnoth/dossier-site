@@ -27,8 +27,10 @@ interface PlottedEvent extends TimelineEvent {
 
 // ── Constants ─────────────────────────────────────────────────────────
 
-// Site is rooted at "/" — case links resolve from the root.
-const BASE = '';
+// Base path for case links. Set from the mount element's data-base attribute
+// (the dossier the timeline belongs to), so case links resolve under the
+// dossier's namespace rather than the site root. One timeline per page.
+let base = '';
 
 const EVENT_COLORS: Record<string, string> = {
   disappearance:           'oklch(55% 0.15 30)',
@@ -74,6 +76,8 @@ export function mount(el: HTMLElement): void {
   const canvas = el.querySelector<HTMLElement>('.ms-interactive__canvas');
   const tooltip = el.querySelector<HTMLElement>('.ms-tooltip');
   if (!canvas) return;
+
+  base = el.dataset['base'] ?? '';
 
   const src = el.dataset['src'];
   if (!src) return;
@@ -214,7 +218,7 @@ function renderDesktop(
 
     if (clickable) {
       group.on('click', () => {
-        window.location.href = `${BASE}/cases/${event.subject}/`;
+        window.location.href = `${base}/cases/${event.subject}/`;
       });
     }
 
@@ -552,7 +556,7 @@ function renderMobile(
       if (activeGroup === group) {
         // Second tap — navigate if clickable
         if (clickable) {
-          window.location.href = `${BASE}/cases/${event.subject}/`;
+          window.location.href = `${base}/cases/${event.subject}/`;
         }
         hideTooltip(tooltip);
         activeGroup = null;
@@ -582,7 +586,7 @@ function renderMobile(
 
     if (clickable) {
       group.on('click', () => {
-        window.location.href = `${BASE}/cases/${event.subject}/`;
+        window.location.href = `${base}/cases/${event.subject}/`;
       });
     }
   }
