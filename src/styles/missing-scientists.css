@@ -731,20 +731,23 @@
     flex-shrink: 0;
   }
 
+  /* Swatches read the same --ms-node-* tokens the diagram paints its circles
+     with (tokens.css). Do not restate colors here — that is exactly how the
+     key came to advertise green while the circles rendered blue. */
   .ms-key__swatch--person {
-    background-color: var(--color-accent);
+    background-color: var(--ms-node-person);
   }
 
   .ms-key__swatch--institution {
-    background-color: oklch(55% 0.12 145);
+    background-color: var(--ms-node-institution);
   }
 
   .ms-key__swatch--location {
-    background-color: oklch(60% 0.1 180);
+    background-color: var(--ms-node-location);
   }
 
   .ms-key__swatch--program {
-    background-color: oklch(55% 0.12 60);
+    background-color: var(--ms-node-program);
   }
 
   /* Key lines for edge layers */

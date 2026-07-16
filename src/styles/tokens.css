@@ -38,6 +38,30 @@
     */
     --color-on-accent:    oklch(96% 0.02 85);
 
+    /*
+      ── Connection-diagram node colors ──
+      One node type, one token, read by BOTH the diagram's circles and the
+      key's swatches. They used to be declared twice — literal oklch() in
+      ms-diagram.ts and again in the key's CSS — and drifted: the key showed
+      a person as accent-green while the circles painted the upstream site's
+      blue, so the key told the reader the wrong thing.
+
+      Defined once here, not per theme: `person` indirects through
+      --color-accent, so it re-themes for free. The other three are fixed
+      hues that read on both the tan and the near-black field, which is the
+      behaviour the key already had.
+    */
+    --ms-node-person:             var(--color-accent);
+    --ms-node-institution:        oklch(55% 0.12 145);
+    --ms-node-location:           oklch(60% 0.10 180);
+    --ms-node-program:            oklch(55% 0.12 60);
+
+    /* Hover/focus states. `person` rides --color-accent-hover for the same reason. */
+    --ms-node-person-bright:      var(--color-accent-hover);
+    --ms-node-institution-bright: oklch(65% 0.16 145);
+    --ms-node-location-bright:    oklch(70% 0.14 180);
+    --ms-node-program-bright:     oklch(65% 0.16 60);
+
     /* ── Type scale — fluid via clamp(), ~1.25 modular ratio ── */
     --text-xs:   clamp(0.70rem,  0.68rem + 0.10vw, 0.75rem);
     --text-sm:   clamp(0.875rem, 0.84rem + 0.17vw, 0.9375rem);

@@ -47,18 +47,25 @@ interface SimEdge extends d3.SimulationLinkDatum<SimNode> {
 // dossier's namespace rather than the site root. One diagram per page.
 let base = '';
 
+// Node colors live in tokens.css (--ms-node-*), which the key's swatches read
+// too — one declaration per node type, so the circles and the key cannot
+// disagree. They previously held literal oklch() values here and drifted from
+// the key: `person` painted the upstream site's blue while the key showed
+// accent-green. var() resolves in an SVG presentation attribute, so these can
+// be handed straight to .attr('fill', …), and the theme toggle repaints the
+// diagram for free.
 const NODE_COLORS: Record<string, string> = {
-  person:      'oklch(55% 0.14 248)',
-  institution: 'oklch(52% 0.12 145)',
-  location:    'oklch(55% 0.1 180)',
-  program:     'oklch(52% 0.12 60)',
+  person:      'var(--ms-node-person)',
+  institution: 'var(--ms-node-institution)',
+  location:    'var(--ms-node-location)',
+  program:     'var(--ms-node-program)',
 };
 
 const NODE_COLORS_BRIGHT: Record<string, string> = {
-  person:      'oklch(65% 0.18 248)',
-  institution: 'oklch(62% 0.16 145)',
-  location:    'oklch(65% 0.14 180)',
-  program:     'oklch(62% 0.16 60)',
+  person:      'var(--ms-node-person-bright)',
+  institution: 'var(--ms-node-institution-bright)',
+  location:    'var(--ms-node-location-bright)',
+  program:     'var(--ms-node-program-bright)',
 };
 
 const NODE_RADIUS: Record<string, number> = {
