@@ -1,7 +1,8 @@
 <div class="container">
-  <section class="hero">
-    <h1 class="hero__heading">{{page_title}}</h1>
-  </section>
+  <!-- The header already shows the brand, so the page title is redundant on
+       screen. It stays in the markup, visually hidden, because a page with no
+       h1 leaves screen-reader users without a top-level heading to land on. -->
+  <h1 class="visually-hidden">{{page_title}}</h1>
   <section class="section">
     <div class="grid-auto">
       {{dossier_cards}}
