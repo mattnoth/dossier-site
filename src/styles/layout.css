@@ -2,7 +2,14 @@
   body {
     min-block-size: 100dvh;
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    /* One track per in-flow child of <body> in base.html, in order:
+       .site-banner | .site-header | main | .site-footer. Only main takes 1fr, so
+       it absorbs the slack on tall viewports and the footer stays put. #skip-link
+       is position:absolute and is deliberately not a track.
+       Adding or removing a <body> child means adding or removing a track here —
+       the tracks are matched by position, so an unpaired child silently shifts
+       1fr onto the wrong element. */
+    grid-template-rows: auto auto 1fr auto;
     /* Without an explicit column, the implicit track is minmax(auto, auto) which
        expands to fit children — wide <pre>/<table> inside main blow out the page.
        minmax(0, 1fr) caps the track at available viewport width. */
