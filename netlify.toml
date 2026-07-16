@@ -67,16 +67,31 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# Cache: CSS and JS (content-hashed by esbuild) — 1 year immutable
+# Cache: CSS and JS — must revalidate.
+#
+# These previously claimed "content-hashed by esbuild — 1 year immutable". They
+# are not hashed: the build emits fixed /main.css and /main.js (build.ts pins
+# `outfile`, and no `entryNames` hash is configured). A stable URL marked
+# immutable for a year means a returning visitor never re-fetches, so every CSS
+# and JS change stays invisible to them until the year elapses. That is exactly
+# what happened: a layout fix went live and returning browsers kept the old file.
+#
+# max-age=0 + must-revalidate makes the browser issue a conditional request; the
+# ETag still yields a cheap 304 when nothing changed, so this costs one small
+# round-trip per asset, not a re-download.
+#
+# The better fix is real content hashing (hash in the filename, template emits
+# the hashed href) — then these can honestly go back to immutable AND updates
+# land instantly. Until that exists, these headers must stay revalidating.
 [[headers]]
   for = "/*.css"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/*.js"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # Security headers — applied to all pages
 [[headers]]
