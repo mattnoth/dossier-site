@@ -782,39 +782,39 @@
   }
 
   .ms-key__dot--disappearance {
-    background-color: oklch(55% 0.15 30);
+    background-color: var(--ms-event-disappearance);
   }
 
   .ms-key__dot--death {
-    background-color: oklch(40% 0.12 0);
+    background-color: var(--ms-event-death);
   }
 
   .ms-key__dot--body_found {
-    background-color: oklch(45% 0.1 300);
+    background-color: var(--ms-event-body-found);
   }
 
   .ms-key__dot--suspect_arrested {
-    background-color: oklch(55% 0.12 145);
+    background-color: var(--ms-event-suspect-arrested);
   }
 
   .ms-key__dot--investigation {
-    background-color: oklch(55% 0.1 248);
+    background-color: var(--ms-event-investigation-milestone);
   }
 
   .ms-key__dot--institutional {
-    background-color: oklch(55% 0.08 200);
+    background-color: var(--ms-event-institutional-statement);
   }
 
   .ms-key__dot--political {
-    background-color: oklch(55% 0.12 60);
+    background-color: var(--ms-event-political);
   }
 
   .ms-key__dot--media {
-    background-color: oklch(60% 0.08 280);
+    background-color: var(--ms-event-media);
   }
 
   .ms-key__dot--other {
-    background-color: var(--color-text-muted);
+    background-color: var(--ms-event-other);
   }
 
   /* ── Tooltip ─────────────────────────────────────────────────────── */

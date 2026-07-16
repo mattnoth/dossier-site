@@ -32,16 +32,20 @@ interface PlottedEvent extends TimelineEvent {
 // dossier's namespace rather than the site root. One timeline per page.
 let base = '';
 
+// Event colors live in tokens.css (--ms-event-*), which the timeline key's dots
+// read too — declared once so the key and the plotted events cannot disagree.
+// They were previously duplicated here as literal oklch(), and `other` had
+// already drifted from the key. var() resolves in SVG presentation attributes.
 const EVENT_COLORS: Record<string, string> = {
-  disappearance:           'oklch(55% 0.15 30)',
-  death:                   'oklch(40% 0.12 0)',
-  body_found:              'oklch(45% 0.1 300)',
-  suspect_arrested:        'oklch(55% 0.12 145)',
-  investigation_milestone: 'oklch(55% 0.1 248)',
-  institutional_statement: 'oklch(55% 0.08 200)',
-  political_event:         'oklch(55% 0.12 60)',
-  media_event:             'oklch(60% 0.08 280)',
-  other:                   'oklch(50% 0.04 260)',
+  disappearance:           'var(--ms-event-disappearance)',
+  death:                   'var(--ms-event-death)',
+  body_found:              'var(--ms-event-body-found)',
+  suspect_arrested:        'var(--ms-event-suspect-arrested)',
+  investigation_milestone: 'var(--ms-event-investigation-milestone)',
+  institutional_statement: 'var(--ms-event-institutional-statement)',
+  political_event:         'var(--ms-event-political)',
+  media_event:             'var(--ms-event-media)',
+  other:                   'var(--ms-event-other)',
 };
 
 const CASE_NAMES: Record<string, string> = {
