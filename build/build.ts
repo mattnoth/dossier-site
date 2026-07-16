@@ -1,4 +1,5 @@
-import { rm, mkdir } from "node:fs/promises";
+import { rm, mkdir, readFile, rename } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as esbuild from "esbuild";
@@ -7,7 +8,7 @@ import { generateSitemap } from "./sitemap.ts";
 import { concatCss, copyAssets, DIST_DIR, SRC_DIR } from "./copy-assets.ts";
 import { lintClasses } from "./lint-classes.ts";
 import { generateImages } from "./generate-images.ts";
-import { clearTemplateCache } from "./templates.ts";
+import { clearTemplateCache, setGlobalSlots } from "./templates.ts";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
@@ -67,6 +68,24 @@ async function stepAssets(): Promise<void> {
   console.log(`[build] assets: ${ms(t)}`);
 }
 
+// ── content hashing ────────────────────────────────────────────────────────
+//
+// CSS/JS ship under a hash of their own bytes, so a changed file is a changed
+// URL. That is what lets netlify.toml cache them immutably for a year without
+// stranding visitors on a stale copy: old URL is never requested again.
+// Emitting them at a fixed name and calling the fixed name immutable is the bug
+// this replaces — see the cache headers in netlify.toml.
+
+/** Rename dist/<file> to dist/<name>.<hash><ext> and return its absolute href. */
+async function hashAsset(fileName: string): Promise<string> {
+  const bytes = await readFile(join(DIST_DIR, fileName));
+  const hash = createHash("sha256").update(bytes).digest("hex").slice(0, 8);
+  const dot = fileName.lastIndexOf(".");
+  const hashed = `${fileName.slice(0, dot)}.${hash}${fileName.slice(dot)}`;
+  await rename(join(DIST_DIR, fileName), join(DIST_DIR, hashed));
+  return `/${hashed}`;
+}
+
 // ── production build ─────────────────────────────────────────────────────
 
 async function runBuild(): Promise<void> {
@@ -75,11 +94,17 @@ async function runBuild(): Promise<void> {
 
   await stepClean();
 
+  // CSS/JS first: their content hash becomes the href the pages must reference,
+  // so they have to exist before any HTML is rendered.
+  await stepCss();
+  await stepJs(true, true);
+  const [cssHref, jsHref] = await Promise.all([hashAsset("main.css"), hashAsset("main.js")]);
+  setGlobalSlots({ css_href: cssHref, js_href: jsHref });
+  console.log(`[build] hashed: ${cssHref} ${jsHref}`);
+
   await generateMissingScientistsPages();
   await stepLintClasses();
   await generateSitemap();
-  await stepCss();
-  await stepJs(true, true);
   await stepAssets();
   await generateImages();
 
@@ -90,6 +115,11 @@ async function runBuild(): Promise<void> {
 
 async function runDev(): Promise<void> {
   console.log("[dev] starting dev server…");
+
+  // Dev serves the assets unhashed: esbuild's watch/serve writes a fixed
+  // main.js, and re-hashing on every keystroke would churn filenames for no
+  // benefit — caching only matters for the deployed site.
+  setGlobalSlots({ css_href: "/main.css", js_href: "/main.js" });
 
   // Initial build (no clean — faster restarts)
   await mkdir(DIST_DIR, { recursive: true });

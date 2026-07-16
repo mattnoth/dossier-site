@@ -8,6 +8,16 @@ const TEMPLATES_DIR = join(__dirname, "../src/templates");
 // Cache loaded templates within a single build run
 const templateCache = new Map<string, string>();
 
+// Slots available to every template without being threaded through each page's
+// call site — currently the content-hashed asset hrefs, which are only known
+// after CSS/JS are emitted. Page slots win on key collision.
+let globalSlots: Record<string, string> = {};
+
+/** Register slots injected into every rendered template. Call before generating pages. */
+export function setGlobalSlots(slots: Record<string, string>): void {
+  globalSlots = { ...globalSlots, ...slots };
+}
+
 async function loadTemplate(name: string): Promise<string | null> {
   const cached = templateCache.get(name);
   if (cached !== undefined) return cached;
@@ -25,9 +35,10 @@ async function loadTemplate(name: string): Promise<string | null> {
 }
 
 function applySlots(template: string, slots: Record<string, string>): string {
+  const merged = { ...globalSlots, ...slots };
   return template.replace(/\{\{(\w+)\}\}/g, (match, key: string) => {
-    // noUncheckedIndexedAccess: slots[key] is string | undefined
-    const val = slots[key];
+    // noUncheckedIndexedAccess: merged[key] is string | undefined
+    const val = merged[key];
     return val !== undefined ? val : match;
   });
 }

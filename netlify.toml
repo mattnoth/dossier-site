@@ -67,31 +67,27 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# Cache: CSS and JS — must revalidate.
+# Cache: CSS and JS — 1 year immutable, and now actually content-hashed.
 #
-# These previously claimed "content-hashed by esbuild — 1 year immutable". They
-# are not hashed: the build emits fixed /main.css and /main.js (build.ts pins
-# `outfile`, and no `entryNames` hash is configured). A stable URL marked
-# immutable for a year means a returning visitor never re-fetches, so every CSS
-# and JS change stays invisible to them until the year elapses. That is exactly
-# what happened: a layout fix went live and returning browsers kept the old file.
+# build.ts hashes each asset's bytes into its filename (main.<hash>.css) and the
+# base template emits that href, so changed content always means a changed URL.
+# Immutable is therefore safe: a stale copy is never requested again, because
+# nothing links to its URL any more.
 #
-# max-age=0 + must-revalidate makes the browser issue a conditional request; the
-# ETag still yields a cheap 304 when nothing changed, so this costs one small
-# round-trip per asset, not a re-download.
-#
-# The better fix is real content hashing (hash in the filename, template emits
-# the hashed href) — then these can honestly go back to immutable AND updates
-# land instantly. Until that exists, these headers must stay revalidating.
+# This only holds while the filenames carry the hash. An earlier version of this
+# file claimed the assets were hashed when they were not — the result was that
+# every CSS/JS change stayed invisible to returning visitors for up to a year.
+# If hashing is ever removed from build.ts, these two blocks must drop back to
+# "public, max-age=0, must-revalidate" in the same commit.
 [[headers]]
   for = "/*.css"
   [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
+    Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
   for = "/*.js"
   [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
+    Cache-Control = "public, max-age=31536000, immutable"
 
 # Security headers — applied to all pages
 [[headers]]
